@@ -18,7 +18,8 @@ if __name__ == "__main__":
     mqtt_client, node_states = setup_mqtt(slack_app)
 
     # Setup Slack commands
-    slack_channel = "C7F3VVB1S"
+    slack_channel = "C7F3VVB1S" #test
+    slack_channel = "C03RXCV2FP0" #workspace-core
     setup_slack_commands(slack_app, mqtt_client, slack_channel)
 
     # Start scheduler
