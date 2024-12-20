@@ -32,9 +32,9 @@ def on_disconnect(client, userdata, rc):
     print(f"{client_id} disconnected from the broker.")
 
 def on_message(client, userdata, msg):
-    print(f"Received message: {msg.payload.decode()} on topic {msg.topic}")
+    print(f"Received message: {msg.payload.decode()} on topic {msg.topic}")  
     pygame.mixer.init()
-    pygame.mixer.music.load("/home/admin/SSI-Doorbell/Doorbell-2.mp3")    
+    pygame.mixer.music.load("/home/admin/SSI-Doorbell/long-doorbell.mp3")      
     pygame.mixer.music.play()
 
 
