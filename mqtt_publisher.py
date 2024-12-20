@@ -6,10 +6,15 @@ import os
 import paho.mqtt.client as mqtt
 from flask import jsonify
 import sqlite3
+import schedule
+import time
+from threading import Thread
 
 load_dotenv()
 
 node_states = {}
+
+slack_channel = "C7F3VVB1S"
 
 # Flask app for handling requests
 app = Flask(__name__)
@@ -180,6 +185,60 @@ def slack_events():
     print("Slack event received.")
     return handler.handle(request)
 
+def fetch_usage_stats(days):
+    conn = get_db_connection()
+    query = """
+        SELECT c.client_id, COUNT(i.id) AS invocation_count
+        FROM invocations i
+        INNER JOIN clients c ON i.client_id = c.id
+        WHERE i.invoked_at >= DATETIME('now', ?)
+        GROUP BY c.client_id;
+    """
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query, (f'-{days} days',))
+        results = cursor.fetchall()
+        return results
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return []
+    finally:
+        conn.close()
+
+def post_usage_stats():
+    try:
+        # Fetch stats for the past 14 days
+        stats = fetch_usage_stats(14)
+
+        if stats:
+            message = "Doorbell usage stats for the past two weeks:\n"
+            for client_id, count in stats:
+                message += f"- <@{client_id}>: {count} rings\n"
+        else:
+            message = "No doorbell activity in the past two weeks."
+
+        # Post the message to Slack
+        bolt_app.client.chat_postMessage(channel=slack_channel, text=message)
+        print("Stats posted to Slack.")
+    except Exception as e:
+        print(f"Error posting stats to Slack: {e}")
+
+# Schedule the task
+#schedule.every(1).minutes.do(post_usage_stats)  # For testing
+schedule.every(2).weeks.do(post_usage_stats)  # For production
+
+# Run the scheduler
+def run_scheduler():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
 # Run the Flask App
 if __name__ == "__main__":
-    app.run(port=3000)
+    # Start the Flask app
+    flask_thread = Thread(target=lambda: app.run(port=3000))
+    flask_thread.daemon = True
+    flask_thread.start()
+
+    # Start the scheduler
+    run_scheduler()
