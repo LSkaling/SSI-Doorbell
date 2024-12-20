@@ -1,11 +1,11 @@
+#!/home/admin/SSI-Doorbell/venv/bin/python3
+
 import paho.mqtt.client as mqtt
 from dotenv import load_dotenv
 import os
 import pygame
 
 load_dotenv()
-
-
 
 username = os.getenv("MQTT_USERNAME")
 password = os.getenv("MQTT_PASSWORD")
