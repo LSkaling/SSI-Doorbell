@@ -3,7 +3,7 @@ from publisher.mqtt import node_states
 
 
 def setup_slack_commands(slack_app, mqtt_client, slack_channel):
-    @slack_app.command("/doorbell2")
+    @slack_app.command("/doorbell")
     def ring_doorbell(ack, respond, command):
         ack()
         mqtt_client.publish("test/topic", "Hello from Python Publisher!")
@@ -13,7 +13,7 @@ def setup_slack_commands(slack_app, mqtt_client, slack_channel):
             respond("Ding dong! The doorbell has been rung!")
         elif all(state == "offline" for state in node_states.values()):
             respond("Ding dong darn! The doorbell is offline! <@D02G3DSP3QB> has been notified, you can check the status [here](https://stats.uptimerobot.com/GGkjip9rBK/798229249)")
-        elif any(state == "offline" for state in node_states.values()):
+        else:
             respond("Ding dong! The doorbell has been rung, but some nodes are offline. <@D02G3DSP3QB> has been notified, you can check the status [here](https://stats.uptimerobot.com/GGkjip9rBK/798229249)")
 
     @slack_app.command("/doorbell-uses")
