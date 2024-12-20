@@ -1,14 +1,5 @@
 import paho.mqtt.client as mqtt
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
-
-username = os.getenv("MQTT_USERNAME")
-password = os.getenv("MQTT_PASSWORD")
-broker = os.getenv("BROKER_IP")
-
-broker = broker  # Replace with your computer's IP
 port = 1883
 topic = "test/topic"
 
