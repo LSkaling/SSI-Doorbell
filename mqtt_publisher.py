@@ -1,6 +1,6 @@
 import paho.mqtt.client as mqtt
 
-broker = "192.168.1.100"  # Replace with your computer's IP
+broker = "137.184.122.63"  # Replace with your computer's IP
 port = 1883
 topic = "test/topic"
 
