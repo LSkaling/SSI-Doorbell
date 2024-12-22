@@ -8,7 +8,7 @@ def setup_slack_commands(slack_app, mqtt_client, slack_channel):
         ack()
         mqtt_client.publish("test/topic", "Hello from Python Publisher!")
         print("Message published.")
-        respond("Ding dong! The doorbell has been rung!")
+        #respond("Ding dong! The doorbell has been rung!")
         if all(state == "online" for state in node_states.values()):
             respond("Ding dong! The doorbell has been rung!")
         elif any(state == "offline" for state in node_states.values()):
